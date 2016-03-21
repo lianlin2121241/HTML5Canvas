@@ -11,7 +11,7 @@ ctx.fillStyle="#00ff00";
 
 /**
  * 画矩形两种方式
- * 1、strokeRect(开始坐标X，开始坐标Y，结束坐标X，结束坐标Y):
+ * 1、strokeRect(开始坐标X，开始坐标Y，宽度，高度):
  * 2、rect()：
  *    stroke()
  */
@@ -23,7 +23,7 @@ ctx.fillStyle="#00ff00";
 
 /**
  * 画实心矩形两种方式
- * 1、fillRect(开始坐标X，开始坐标Y，结束坐标X，结束坐标Y):
+ * 1、fillRect(开始坐标X，开始坐标Y，宽度，高度):
  * 2、rect()：
  *    fill()
  */
