@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <canvas id="myCanvas" style="border: 1px solid #cccccc;">你的浏览器不支持HTML5</canvas>
+    <div>
+        <input type="button" value="yellow" style="background-color: yellow;" onclick="linecolor='yellow'"/>
+        <input type="button" value="red" style="background-color: red;" onclick="linecolor='red'"/>
+        <input type="button" value="blue" style="background-color: blue;" onclick="linecolor='blue'"/>
+        <input type="button" value="green" style="background-color: green;" onclick="linecolor='green'"/>
+        <input type="button" value="white" style="background-color: white;" onclick="linecolor='white'"/>
+        <input type="button" value="black" style="background-color: black; color: #ffffff;" onclick="linecolor='black'"/>
+    </div>
+    <div>
+        <input type="button" value="4px" onclick="linw='4'"/>
+        <input type="button" value="8px" onclick="linw='8'"/>
+        <input type="button" value="16px" onclick="linw='16'"/>
+    </div>
+    <div>
+        <input type="button" value="clear" onclick="ctx.fillRect(0,0,700,500);"/>
+    </div>
+    <div>
+        <input type="button" value="EXPORT" onclick="copyimage()"/>
+    </div>
+</body>
+<script src="app/index.js" type="application/javascript"></script>
+</html>
