@@ -215,4 +215,28 @@ function onclick(event,display){
     enemyValue=Math.floor(Math.random()*3);
     selfBitmap.bitmapData=showList[selfValue];
     enemyBitmap.bitmapData=showList[enemyValue];
+
+    showResult(checkList[selfValue][enemyValue]);
+}
+
+/**
+ * 显示猜拳结果
+ * @param value
+ */
+function showResult(value){
+    switch (value){
+        case -1:
+            loss++;
+            break;
+        case 0:
+            draw++;
+            break;
+        case 1:
+            win++;
+            break;
+    }
+    selfTextAll.text="猜拳次数："+(loss+draw+win);
+    selfTextWin.text="胜利次数："+win;
+    selfTextLoss.text="失败次数："+loss;
+    selfTextDraw.text="平局次数："+draw;
 }
