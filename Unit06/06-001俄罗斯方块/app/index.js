@@ -47,6 +47,15 @@ var nextBox,nowBox;
 var BOX;
 var pointBox={x:0,y:0};
 var speed=15,maxSpeed=15,speedIndex=0;
+var myKey={
+    keyControl:null,
+    step:1,
+    stepindex:0,
+    touchX:0,
+    touchY:0,
+    touchMove:false,
+    isTouchDown:false
+};
 
 function main(){
     backLayer=new LSprite();
@@ -105,10 +114,42 @@ function gameToStart(){
     initNodeList();
     getNextBox();
     backLayer.addEventListener(LEvent.ENTER_FRAME,onframe);
+
+    backLayer.addEventListener(LMouseEvent.MOUSE_DOWN,touchDown);
+    backLayer.addEventListener(LMouseEvent.MOUSE_UP,touchUp);
+    backLayer.addEventListener(LMouseEvent.MOUSE_MOVE,touchMove);
+
+    if(!LGlobal.canTouch){
+        LEvent.addEventListener(LGlobal.window,LKeyboardEvent.KEY_DOWN,onkeydown);
+        LEvent.addEventListener(LGlobal.window,LKeyboardEvent.KEY_UP,onkeyup);
+    }
 }
 
 function onframe(){
     minusBox();
+    if(myKey.keyControl!=null&&myKey.stepindex--<0){
+        myKey.stepindex=myKey.step;
+        switch (myKey.keyControl){
+            case "left":
+                if(checkPuls(-1,0)){
+                    pointBox.x-=1;
+                }
+                break;
+            case "right":
+                if(checkPuls(1,0)){
+                    pointBox.x+=1;
+                }
+                break;
+            case "down":
+                if(checkPuls(0,1)){
+                    pointBox.y+=1;
+                }
+                break;
+            case "up":
+                changeBox();
+                break;
+        }
+    }
     if(speedIndex++>speed){
         speedIndex=0;
         if(checkPuls(0,1)){
@@ -116,7 +157,7 @@ function onframe(){
         }else{
             plusBox();
             if(pointBox.y<0){
-                //gameOver();
+                gameOver();
                 return;
             }
             getNextBox();
@@ -226,6 +267,84 @@ function drawMap(){
                 nodeList[i][j]["bitmap"].bitmapData=null;
             }
         }
+    }
+}
+
+function gameOver(){
+    backLayer.die();
+    var txt=new LTextField();
+    txt.color="#ff0000";
+    txt.size=40;
+    txt.text="游戏结束";
+    txt.x=(LGlobal.width-txt.getWidth())/2;
+    txt.y=200;
+    backLayer.addChild(txt);
+}
+
+function onkeydown(event){
+    if(myKey.keyControl!=null)return;
+    if(event.keyCode==37){
+        myKey.keyControl="left";
+    }else if(event.keyCode==38){
+        myKey.keyControl="up";
+    }else if(event.keyCode==39){
+        myKey.keyControl="right";
+    }else if(event.keyCode==40){
+        myKey.keyControl="down";
+    }
+}
+
+function onkeyup(event){
+    myKey.keyControl=null;
+    myKey.stepindex=0;
+}
+
+function touchDown(event){
+    myKey.isTouchDown=true;
+    myKey.touchX=Math.floor(event.selfX/20);
+    myKey.touchY=Math.floor(event.selfY/20);
+    myKey.touchMove=false;
+    myKey.keyControl=null;
+}
+
+function touchUp(event){
+    myKey.isTouchDown=false;
+    if(!myKey.touchMove)myKey.keyControl="up";
+}
+
+function touchMove(event){
+    if(!myKey.isTouchDown) return;
+    var mx=Math.floor(event.selfX/20);
+    if(myKey.touchX==0){
+        myKey.touchX=mx;
+        myKey.touchY=Math.floor(event.selfY/20);
+    }
+    if(mx>myKey.touchX){
+        myKey.keyControl="right";
+    }else if(mx<myKey.touchX){
+        myKey.keyControl="left";
+    }
+    if(Math.floor(event.selfY/20)>myKey.touchY){
+        myKey.keyControl="down";
+    }
+}
+
+function changeBox(){
+    var saveBox=nowBox;
+    nowBox=[
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,0,0,0],
+        [0,0,0,0]
+    ]
+    var i,j;
+    for(i=0;i<saveBox.length;i++){
+        for(j=0;j<saveBox[0].length;j++){
+            nowBox[i][j]=saveBox[3-j][i];
+        }
+    }
+    if(!checkPuls(0,0)){
+        nowBox=saveBox;
     }
 }
 
