@@ -46,7 +46,9 @@ var bitmapDataList=[];
 var nextBox,nowBox;
 var BOX;
 var pointBox={x:0,y:0};
-var speed=15,maxSpeed=15,speedIndex=0;
+var point=0,pointText;
+var del=0,delText;
+var speed=15,maxSpeed=15,speedIndex= 0,speedText;
 var myKey={
     keyControl:null,
     step:1,
@@ -106,6 +108,21 @@ function gameToStart(){
     backLayer.removeAllChild();
     var bitmap=new LBitmap(new LBitmapData(imglist["backImage"]));
     backLayer.addChild(bitmap);
+    pointText=new LTextField();
+    pointText.x=240;
+    pointText.y=200;
+    pointText.size=20;
+    backLayer.addChild(pointText);
+    delText=new LTextField();
+    delText.x=240;
+    delText.y=290;
+    delText.size=20;
+    backLayer.addChild(delText);
+    speedText=new LTextField();
+    speedText.x=240;
+    speedText.y=385;
+    speedText.size=20;
+    backLayer.addChild(speedText);
     graphicsMap=new LSprite();
     backLayer.addChild(graphicsMap);
     nextLayer=new LSprite();
@@ -133,20 +150,40 @@ function onframe(){
             case "left":
                 if(checkPuls(-1,0)){
                     pointBox.x-=1;
+                    if(LGlobal.canTouch||true){
+                        myKey.keyControl=null;
+                        myKey.touchMove=true;
+                        myKey.touchX=0;
+                    }
                 }
                 break;
             case "right":
                 if(checkPuls(1,0)){
                     pointBox.x+=1;
+                    if(LGlobal.canTouch||true){
+                        myKey.keyControl=null;
+                        myKey.touchMove=true;
+                        myKey.touchX=0;
+                    }
                 }
                 break;
             case "down":
                 if(checkPuls(0,1)){
                     pointBox.y+=1;
+                    if(LGlobal.canTouch||true){
+                        myKey.keyControl=null;
+                        myKey.touchMove=true;
+                        myKey.touchY = 0;
+                        myKey.touchX = 0;//#######
+                    }
                 }
                 break;
             case "up":
                 changeBox();
+                if(LGlobal.canTouch||true){
+                    myKey.keyControl=null;
+                    myKey.stepindex=0;
+                }
                 break;
         }
     }
@@ -160,6 +197,7 @@ function onframe(){
                 gameOver();
                 return;
             }
+            removeBox();
             getNextBox();
         }
     }
@@ -324,6 +362,7 @@ function touchMove(event){
     }else if(mx<myKey.touchX){
         myKey.keyControl="left";
     }
+    console.log(Math.floor(event.selfY/20)>myKey.touchY);
     if(Math.floor(event.selfY/20)>myKey.touchY){
         myKey.keyControl="down";
     }
@@ -348,3 +387,53 @@ function changeBox(){
     }
 }
 
+function removeBox(){
+    var i, j,count=0;
+    for(i=pointBox.y;i<(pointBox.y+4);i++){
+        if(i<0||i>=map.length)continue;
+        for(j=0;j<map[0].length;j++){
+            if(map[i][j]==0){
+                break;
+            }
+            if(j==map[0].length-1){
+                removeLine(i);
+                count++;
+            }
+        }
+    }
+    if(count==0)return;
+    del+=count;
+    if(count==1){
+        point+=1;
+    }else if(count==2){
+        point+=3;
+    }else if(count==3){
+        point+=6;
+    }else if(count==4){
+        point+=10;
+    }
+    if(speed>0&&del/100>=(maxSpeed-speed+1)){
+        speed--;
+    }
+    showText();
+}
+
+function removeLine(line){
+    var i,j;
+    for(i=line;i>1;i--){//#####
+        for(j=0;j<map[0].length;j++){
+            map[i][j]=map[i-1][j];
+            nodeList[i][j]["index"]=nodeList[i-1][j]["index"];
+        }
+    }
+    for(j=0;j<map[0].length;j++){
+        map[0][j]=0;
+        nodeList[i][j]["index"]=-1;
+    }
+}
+
+function showText(){
+    pointText.text=point;
+    delText.text=del;
+    speedText.text=maxSpeed-speed+1;
+}
